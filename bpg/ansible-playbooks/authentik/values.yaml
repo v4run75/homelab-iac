@@ -1,0 +1,22 @@
+authentik:
+    secret_key: ""
+    # This sends anonymous usage-data, stack traces on errors and
+    # performance data to sentry.io, and is fully opt-in
+    error_reporting:
+        enabled: false
+    postgresql:
+        password: ""
+
+server:
+    ingress:
+        ingressClassName: traefik
+        enabled: true
+        hosts:
+            - authentik.10.0.0.2.nip.io  # Configure: use your K3s IP for nip.io
+
+postgresql:
+    enabled: true
+    auth:
+        username: ""
+        password: ""
+        database: ""

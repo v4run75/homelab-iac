@@ -1,0 +1,52 @@
+---
+- name: Install Wazuh All-in-One (Manager + Dashboard + Indexer)
+  hosts: wazuh_server
+  become: true
+  vars:
+    wazuh_installer_url: "https://packages.wazuh.com/4.14/wazuh-install.sh"
+    wazuh_installer_path: "/tmp/wazuh-install.sh"
+    password_file: "/root/wazuh-install-files/wazuh-passwords.txt"
+
+  tasks:
+
+    - name: Update apt cache and install dependencies
+      apt:
+        name:
+          - curl
+          - apt-transport-https
+          - lsb-release
+          - gnupg
+          - sudo
+          - unzip
+          - wget
+        state: present
+        update_cache: yes
+
+    - name: Download Wazuh all-in-one installer
+      get_url:
+        url: "{{ wazuh_installer_url }}"
+        dest: "{{ wazuh_installer_path }}"
+        mode: '0755'
+
+    - name: Run Wazuh installer in automatic mode
+      command: "bash {{ wazuh_installer_path }} -a -i -o"
+      args:
+        creates: "{{ password_file }}"
+      register: wazuh_install
+      async: 1800
+      poll: 10
+
+
+    - name: Ensure Wazuh services are enabled and running
+      systemd:
+        name: "{{ item }}"
+        enabled: yes
+        state: started
+      loop:
+        - wazuh-manager
+        - wazuh-indexer
+        - wazuh-dashboard
+
+    - name: Display location of generated passwords
+      debug:
+        msg: "Wazuh credentials are in the tar file. Extract with sudo tar -O -xvf /tmp/wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt"

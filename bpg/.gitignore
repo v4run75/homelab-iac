@@ -1,0 +1,12 @@
+*.pem
+*_password.txt
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+git_http_backend.auto.tf
+ansible_inventory.ini
+git_http_backend.auto.tf
+wazuh_vm_key.pem
+k3s_vm_key.pem
+terraform.tfvars

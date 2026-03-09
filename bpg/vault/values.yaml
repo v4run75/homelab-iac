@@ -1,0 +1,15 @@
+ui:
+  enabled: true
+
+server:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: vault-pki
+    hosts:
+      - host: vault.10.0.0.2.nip.io  # Configure: use your K3s IP for nip.io
+    tls:
+      - secretName: vault-tls
+        hosts:
+          - vault.10.0.0.2.nip.io

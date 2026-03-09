@@ -1,0 +1,83 @@
+hostName: fleet.10.0.0.2.nip.io  # Configure: use your K3s IP for nip.io
+replicas: 1
+imageRepository: fleetdm/fleet
+imageTag: v4.81.1
+
+nodeSelector:
+  kubernetes.io/arch: amd64
+
+resources:
+  limits:
+    cpu: 1
+    memory: 2Gi
+  requests:
+    cpu: 0.1
+    memory: 50Mi
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: vault-pki
+  hosts:
+    - host: fleet.10.0.0.2.nip.io
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: fleet-tls
+      hosts:
+        - fleet.10.0.0.2.nip.io
+
+fleet:
+  listenPort: 8080
+  autoApplySQLMigrations: true
+  secretName: fleet
+  tls:
+    enabled: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 3333
+    runAsGroup: 3333
+
+database:
+  secretName: fleet-mysql-creds
+  address: fleet-database-mysql:3306
+  database: fleet
+  username: fleet
+  passwordKey: password
+  maxOpenConns: 50
+  maxIdleConns: 50
+  connMaxLifetime: 0
+  tls:
+    enabled: false
+
+cache:
+  address: fleet-cache-redis-master:6379
+  database: "0"
+  usePassword: true
+  secretName: fleet-redis-creds
+  passwordKey: password
+
+osquery:
+  nodeKeySize: 24
+  labelUpdateInterval: 30m
+  detailUpdateInterval: 30m
+  logging:
+    statusPlugin: filesystem
+    resultPlugin: filesystem
+  filesystem:
+    statusLogFile: osquery_status
+    resultLogFile: osquery_result
+    enableRotation: false
+    enableCompression: false
+    volumeSize: 20Gi
+
+environments:
+  FLEET_SERVER_URL: "https://fleet.10.0.0.2.nip.io"
+
+mysql:
+  enabled: false
+
+redis:
+  enabled: false
