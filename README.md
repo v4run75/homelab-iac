@@ -149,8 +149,8 @@ Operator → terraform apply
 Operator → op read (SSH key) → SSH to VM
 Operator → op read (kubeconfig) → kubectl to K3S cluster
 Operator → browser → Wazuh Dashboard
-Operator → browser → Vault UI (https://vault.192.168.2.254.nip.io)
-Operator → browser → Fleet UI (https://fleet.192.168.2.254.nip.io)
+Operator → browser → Vault UI (https://vault.10.0.0.2.nip.io)
+Operator → browser → Fleet UI (https://fleet.10.0.0.2.nip.io)
 ```
 
 ### K3S Services
